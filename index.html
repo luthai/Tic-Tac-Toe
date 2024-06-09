@@ -10,24 +10,52 @@
 <body>
     <h1>Tic-Tac-Toe</h1>
     <div class="game-container">
-        <div class="player_one">
-            <h2>Player one</h2>
+        <div class="player-one">
+            <h2>Player 1</h2>
+            <form class="frm-player-one"> 
+                <label for="player-one-name"> 
+                    name: 
+                </label> 
+                <input type="text" 
+                       class="input-player-one-name"
+                       name="player-one-name" required> 
+                <button class="btn-player-one-name" type="submit">Submit</button> 
+            </form>
+            <p class="player-one-name"></p>
         </div>
         <div class="game">
-            <div class="cell">1</div>
-            <div class="cell">2</div>
-            <div class="cell">3</div>
-            <div class="cell">4</div>
-            <div class="cell">5</div>
-            <div class="cell">6</div>
-            <div class="cell">7</div>
-            <div class="cell">8</div>
-            <div class="cell">9</div>
+            <div class="cell" data-coord="0 0"></div>
+            <div class="cell" data-coord="0 1"></div>
+            <div class="cell" data-coord="0 2"></div>
+            <div class="cell" data-coord="1 0"></div>
+            <div class="cell" data-coord="1 1"></div>
+            <div class="cell" data-coord="1 2"></div>
+            <div class="cell" data-coord="2 0"></div>
+            <div class="cell" data-coord="2 1"></div>
+            <div class="cell" data-coord="2 2"></div>
         </div>
-        <div class="player_two">
-            <h2>Player two</h2>
+        <div class="player-two">
+            <h2>Player 2</h2>
+            <form class="frm-player-two"> 
+                <label for="player-two-name"> 
+                    name: 
+                </label> 
+                <input type="text" 
+                       class="input-player-two-name"
+                       name="player-two-name" required> 
+                <button class="btn-player-two-name" type="submit">Submit</button> 
+            </form>
+            <p class="player-two-name"></p>
         </div>
-        <div class="game-message"></div>
+    </div>
+    <div class="game-message"></div>
+    <button class="btn-reset-game">Reset Game</button>
+
+    <div class="modal">
+        <div class="modal-content">
+          <span class="close">&times;</span>
+          <p>Please enter player one name first.</p>
+        </div>
     </div>
 </body>
 </html>

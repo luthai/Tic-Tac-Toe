@@ -1,5 +1,10 @@
 "use strict";
 
+let coord = [];
+let player_one_name = "";
+let player_two_name = "";
+let player_one_ready = false;
+
 function Gameboard () {
     let x = 3, y = 3;
     let board = [];
@@ -14,8 +19,7 @@ function Gameboard () {
     const setMarking = (cell, player) => {
         if (board[cell[0]][cell[1]].getPlayerCell() === 0) {
             board[cell[0]][cell[1]].setPlayerCell(player);
-        }
-           
+        }    
     };
 
     return { getBoard, setMarking };
@@ -38,45 +42,102 @@ function createPlayer (name, marking) {
 }
 
 function playGame () {
-    const player1 = createPlayer("one", "X");
-    const player2 = createPlayer("two", "O");
+    const player1 = createPlayer(player_one_name, "X");
+    const player2 = createPlayer(player_two_name, "O");
     
     let board = Gameboard();
-   
+
     let turn = 0;
     let activePlayer;
     let check_win = false;
-    while (turn < 9) {
-        if (turn % 2 === 0) {
-            activePlayer = player1;
-        }
-        else {
-            activePlayer = player2;
-        }
 
-        let coord_x = prompt("x: ");
-        let coord_y = prompt("y: ");
+    const boardCells = document.querySelectorAll(".cell");
+    boardCells.forEach((elem) => {
+        elem.addEventListener("click", (e) => {
+            let text_coord = e.target.dataset.coord;
+            coord = text_coord.split(" ");
+            let coord_i = parseFloat(coord[0]);
+            let coord_j = parseFloat(coord[1]);
 
-        board.setMarking([coord_x, coord_y], activePlayer);
+            if (board.getBoard()[coord_i][coord_j].getPlayerCell() === 0 && check_win === false) {
+                if (turn % 2 === 0) {
+                    activePlayer = player1;
+                }
+                else {
+                    activePlayer = player2;
+                }
+    
+                board.setMarking([coord_i, coord_j], activePlayer);
+                e.target.textContent = activePlayer.marking;
+                
+                if (turn > 3) {
+                    check_win = winCondition(board.getBoard());
+                }
+        
+                if (check_win == true) {
+                    let win_message = document.querySelector(".game-message");
+                    win_message.textContent = `Player ${activePlayer.name} have won!`;
 
-        printBoard(board.getBoard());
-
-        if (turn > 4) {
-            check_win = winCondition(board.getBoard());
-        }
-
-        if (check_win == true) {
-            console.log(`Player ${activePlayer.name} have won.`)
-            return;
-        }
-
-        turn++;
-    }
-
-    console.log("No winner in Tic-Tac-Toe!");
+                    let btn_reset_game = document.querySelector(".btn-reset-game");
+                    btn_reset_game.style.visibility = "visible";
+                }
+    
+                turn++;
+            }
+        })
+    })
 }
 
-//playGame();
+const btn_reset_game = document.querySelector(".btn-reset-game");
+btn_reset_game.addEventListener("click", (e) => {
+    window.location.reload();
+})
+
+const form_player_one = document.querySelector(".frm-player-one");
+const input_player_one_name = document.querySelector(".input-player-one-name");
+const p_player_one_name = document.querySelector(".player-one-name");
+const btn_player_one_name = document.querySelector(".btn-player-one-name");
+btn_player_one_name.addEventListener("click", (e) => {
+    e.preventDefault();
+
+    p_player_one_name.textContent = input_player_one_name.value;
+    player_one_name = input_player_one_name.value;
+    player_one_ready =true;
+
+    form_player_one.style.display = "none";
+})
+
+const form_player_two = document.querySelector(".frm-player-two");
+const input_player_two_name = document.querySelector(".input-player-two-name");
+const p_player_two_name = document.querySelector(".player-two-name");
+const btn_player_two_name = document.querySelector(".btn-player-two-name");
+btn_player_two_name.addEventListener("click", (e) => {
+    e.preventDefault();
+
+    if (player_one_ready === true) {
+        p_player_two_name.textContent = input_player_two_name.value;
+        player_two_name = input_player_two_name.value;
+
+        form_player_two.style.display = "none";
+
+        playGame();
+    } else {
+        modal.style.display = "block";
+        console.log(modal);
+    }
+})
+
+const modal = document.querySelector(".modal");
+const span = document.getElementsByClassName("close")[0];
+span.onclick = function() {
+    modal.style.display = "none";
+}
+
+window.onclick = function(event) {
+    if (event.target == modal) {
+        modal.style.display = "none";
+    }
+}
 
 function printBoard (board) {
     let result = "";
@@ -124,7 +185,6 @@ function winCondition (board) {
         }
     }
 
-    count_marking = 0;
     for (let j = 0; j < 3; j++) {
         for (let i = 0; i < 3; i++) {
             if (board[i][j].getPlayerCell() === 0) {
@@ -151,7 +211,6 @@ function winCondition (board) {
         }
     }
 
-    count_marking = 0;
     for (let i = 0; i < 3; i++) {
         let j = i;
         if (board[i][j].getPlayerCell() === 0) {
@@ -165,13 +224,21 @@ function winCondition (board) {
                     count_marking++;
                 } else {
                     break;
-                }j--;
+                }
+                
+                j--;
+            }
+        }
+
+        if (i === 2) {
+            if (count_marking === 3) {
+                return true;
+            } else {
                 count_marking = 0;
             }
         }
     }
 
-    count_marking = 0;
     let j = 2;
     for (let i = 0; i < 3; i++) {
         if (board[i][j].getPlayerCell() === 0) {
@@ -190,7 +257,7 @@ function winCondition (board) {
 
             j--;
         }
-
+        
         if (i === 2) {
             if (count_marking === 3) {
                 return true;
